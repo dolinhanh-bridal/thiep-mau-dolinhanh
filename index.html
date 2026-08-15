@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minh & Linh | Thiệp cưới online</title>
+</head>
+<body>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  /*
+    Luxury editorial direction, bang mau TRANG - DEN (chi Linh chot 2026-08-15
+    cho thuong hieu Dolinhanh, thay bang mau ivory/beige/olive cu cua anh
+    Cuong): nen trang, chu den, duong ke xam nhat, anh full-bleed voi chu dat
+    lech tam. Single-theme by choice — emulates a printed fine-art wedding
+    publication, not a light/dark mode of one page.
+    Ten bien giu nguyen (--ivory, --beige, --olive...) de khong phai sua ~200
+    cho dung bien trong file; chi doi GIA TRI.
+  */
+  :root {
+    --ivory: #ffffff;
+    --beige: #f4f4f4;
+    --line: #dcdcdc;
+    --taupe: #8c8c8c;
+    --olive: #2b2b2b;
+    --charcoal: #0e0e0e;
+    --charcoal-soft: #6b6b6b;
+    --dark: #000000;
+    --serif: Georgia, "Noto Serif", "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; scroll-padding-top: 64px; }
+  body { margin: 0; font-family: var(--sans); color: var(--charcoal); background: var(--ivory); }
+  ::selection { background: var(--taupe); color: var(--ivory); }
+  h1, h2, h3 { font-family: var(--serif); text-wrap: balance; margin: 0; font-weight: 400; }
+  em { font-style: italic; }
+  img { max-width: 100%; }
+  svg { display: block; }
+  button { font: inherit; }
+
+  .progress-bar { position: fixed; top: 0; left: 0; height: 2px; width: 0%; background: var(--olive); z-index: 60; transition: width 0.1s linear; }
+
+  /* ---------- Nav ---------- */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px clamp(20px, 5vw, 48px);
+    background: transparent; color: var(--ivory);
+    transition: background 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
+  }
+  .nav.solid { background: rgba(244, 244, 244, 0.94); color: var(--charcoal); box-shadow: 0 1px 0 var(--line); }
+  .nav-mono { font-family: var(--serif); font-style: italic; letter-spacing: 0.05em; font-size: 1.05rem; }
+  .nav-links { display: flex; gap: clamp(12px, 2.6vw, 24px); }
+  .nav-links a {
+    color: inherit; text-decoration: none; font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.9;
+    padding-bottom: 3px; border-bottom: 1px solid transparent; white-space: nowrap;
+  }
+  .nav-links a:hover, .nav-links a:focus-visible { border-color: currentColor; opacity: 1; }
+  @media (max-width: 780px) { .nav-links { display: none; } }
+
+  /* ---------- Hero ---------- */
+  .hero { position: relative; min-height: min(96vh, 820px); overflow: hidden; margin-top: -64px; }
+  /* object-position PHẢI chỉnh tay theo từng ảnh. Với ảnh DỌC trên màn hình
+     NGANG (desktop), cover chỉ hiện 1 dải ngang mỏng — quy tắc đã kiểm chứng
+     (Diệp & Quân 2026-08-06): %y đặt ≈ ĐÚNG vị trí mặt trong ảnh (y_mặt chia
+     chiều cao ảnh, ĐO bằng cách nhìn ảnh thật — đừng đoán "chắc ~45%", ảnh
+     D&Q tưởng 45% hoá ra 56% vì trên đầu còn nguyên vòm cửa) thì mặt nằm nửa
+     TRÊN khung trên mọi cỡ cửa sổ, chữ hero bottom 8vh không bao giờ đụng.
+     LUÔN xem thử ở 3 khổ: 1280x800, khổ RỘNG-THẤP 1600x680 (cửa sổ browser
+     thật trên laptop — chính khổ này từng làm chữ đè mặt dù 1280x800 nhìn
+     ổn), và mobile 375. */
+  .hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 42%; }
+  /* Hero kiểu "Coming Soon" (anh Cường chốt 2026-08-06, thay bản thẻ card ngà
+     vì card to che người trên mobile): chữ sáng mảnh đặt THẲNG lên ảnh, canh
+     giữa ngang ở 1/3 dưới khung (ngang ngực/eo — không đè mặt), nổi trên mọi
+     ảnh nhờ 2 lớp bảo hiểm: text-shadow + gradient tối nhẹ trên/đậm dần dưới
+     (.hero::after). Thông tin phụ dồn thành 1 dòng chữ nhỏ .hero-strip sát
+     đáy — giống các poster teaser "coming soon". */
+  .hero::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.16), rgba(0,0,0,0) 28%, rgba(0,0,0,0) 52%, rgba(0,0,0,0.52));
+  }
+  .hero-text {
+    /* bottom thấp (~8vh) để cả khối chữ nằm ngang NGỰC/EO người trong ảnh —
+       từng để 15vh và chữ đè ngay mặt chú rể trên desktop (band ảnh dọc đưa
+       mặt về giữa khung). Nếu ảnh khác vẫn bị đè mặt: hạ tiếp bottom, đừng
+       tăng. */
+    position: absolute; left: 0; right: 0; bottom: clamp(60px, 8vh, 100px); z-index: 1;
+    text-align: center; padding: 0 20px; color: var(--ivory);
+    text-shadow: 0 2px 28px rgba(0,0,0,0.55), 0 1px 3px rgba(0,0,0,0.45);
+  }
+  .hero-kicker { font-size: 0.72rem; letter-spacing: 0.26em; text-transform: uppercase; margin: 0 0 14px; color: rgba(255,255,255,0.92); }
+  .hero-text h1 { font-size: clamp(2.4rem, 6.5vw, 4.2rem); line-height: 1.05; letter-spacing: 0.05em; }
+  .hero-date { font-size: 0.9rem; letter-spacing: 0.22em; margin: 18px 0 0; font-variant-numeric: tabular-nums; color: rgba(255,255,255,0.92); }
+  .hero-strip {
+    position: absolute; left: 0; right: 0; bottom: 26px; z-index: 1; text-align: center;
+    font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; margin: 0;
+    color: rgba(255,255,255,0.85); padding: 0 16px; text-shadow: 0 1px 12px rgba(0,0,0,0.5);
+  }
+  .hero-strip b { font-weight: 600; }
+  .scroll-cue {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 22px; background: none; border: none;
+    font-family: var(--sans); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.85);
+    cursor: pointer; padding: 4px 0; animation: bob 2.6s ease-in-out infinite;
+  }
+  .scroll-cue svg { width: 15px; height: 22px; }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+
+  /* ---------- Shared rhythm ---------- */
+  section, footer.thanks { padding: clamp(64px, 10vw, 108px) clamp(24px, 6vw, 56px); }
+  .eyebrow { font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--olive); margin: 0 0 18px; font-weight: 600; }
+  .eyebrow.center { text-align: center; }
+  .section-lede { text-align: center; font-size: 0.92rem; color: var(--charcoal-soft); max-width: 52ch; margin: -8px auto 40px; line-height: 1.7; }
+  [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  [data-reveal].in { opacity: 1; transform: none; }
+
+  .btn-line {
+    display: inline-flex; align-items: center; gap: 8px; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 11px 20px; border: 1px solid var(--charcoal); color: var(--charcoal); text-decoration: none;
+    background: none; cursor: pointer; font-family: var(--sans); margin: 4px 4px 0;
+  }
+  .btn-line svg { width: 15px; height: 15px; }
+  .btn-line:hover { background: var(--charcoal); color: var(--ivory); }
+  .btn-line.ghost { border-color: var(--line); color: var(--charcoal-soft); }
+  .btn-line.ghost:hover { background: var(--charcoal-soft); border-color: var(--charcoal-soft); color: var(--ivory); }
+  .btn-line:focus-visible, .scroll-cue:focus-visible, .nav-links a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, .rep-tile:focus-visible {
+    outline: 2px solid var(--olive); outline-offset: 2px;
+  }
+
+  /* ---------- Welcome (split) ---------- */
+  .welcome { background: var(--beige); }
+  .welcome-grid { display: grid; grid-template-columns: 1fr; gap: 40px; max-width: 1100px; margin: 0 auto; }
+  /* 1 cot: da bo anh Welcome (2026-08-15, thiep chi dung 1 anh hero duy nhat) */
+  .welcome-grid { max-width: 720px; }
+  .welcome-inner { display: flex; gap: 28px; }
+  .mono-vertical { font-family: var(--serif); font-style: italic; font-size: 0.95rem; color: var(--taupe); line-height: 1.9; writing-mode: vertical-rl; text-orientation: mixed; flex: none; }
+  .welcome-inner h2 { font-size: clamp(1.3rem, 3vw, 1.7rem); margin-bottom: 18px; letter-spacing: 0.01em; }
+  .welcome-inner p { font-size: 0.95rem; line-height: 1.85; color: var(--charcoal); max-width: 46ch; margin: 0 0 1.1em; }
+  .welcome-inner .sign-off { margin-bottom: 2px; }
+  .welcome-inner .signature { font-family: var(--serif); font-style: italic; font-size: 1.15rem; color: var(--olive); margin: 0; }
+  .welcome-photo { aspect-ratio: 4 / 5; overflow: hidden; }
+  .welcome-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* ---------- Story track (icon timeline) ---------- */
+  .story-track { display: flex; justify-content: center; gap: clamp(10px, 4vw, 20px); max-width: 900px; margin: 0 auto; position: relative; }
+  .story-step { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; padding-top: 4px; }
+  .story-step::before {
+    content: ""; position: absolute; top: 20px; left: -50%; width: 100%; height: 1px;
+    background-image: linear-gradient(to right, var(--line) 40%, transparent 0%); background-size: 8px 1px; background-repeat: repeat-x;
+  }
+  .story-step:first-child::before { display: none; }
+  .story-step .icon { width: 26px; height: 26px; color: var(--olive); margin-bottom: 14px; background: var(--ivory); position: relative; z-index: 1; }
+  .story-step .step-year { font-size: 0.78rem; letter-spacing: 0.08em; color: var(--taupe); font-variant-numeric: tabular-nums; margin-bottom: 4px; }
+  .story-step .step-label { font-size: 0.85rem; color: var(--charcoal); }
+
+  /* ---------- Story detail (photo + prose) ---------- */
+  .story-grid { display: grid; grid-template-columns: 1fr; gap: 28px; max-width: 620px; margin: 56px auto 0; }
+  @media (min-width: 700px) { .story-grid { grid-template-columns: 0.85fr 1.15fr; align-items: start; gap: 44px; max-width: 960px; } }
+  .story-photo { aspect-ratio: 4 / 5; overflow: hidden; }
+  .story-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .story-text h3 { font-size: clamp(1.3rem, 3.2vw, 1.6rem); margin-bottom: 16px; }
+  .story-text p { font-size: 0.94rem; line-height: 1.85; color: var(--charcoal); margin: 0 0 1em; }
+
+  /* ---------- Editorial photo grid (reportage + pre-wedding share this) ---------- */
+  /* Lưới ĐỀU: 3 cột desktop / 2 cột mobile, mọi ô cùng tỉ lệ 4:5. Bản cũ dùng
+     span 4/2/3 xen kẽ — nhìn "editorial" trên lý thuyết nhưng vì mỗi ô tự giữ
+     aspect-ratio nên các hàng cao thấp so le, anh Cường chê lệch lạc trên
+     desktop (2026-08-06, thiệp Diệp & Quân). Số ảnh gallery nên chia hết cho
+     cả 3 và 2 (6 hoặc 12 ảnh) để không có ô mồ côi cuối lưới. */
+  .rep-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 1080px; margin: 0 auto; }
+  .rep-tile { min-width: 0; margin: 0; overflow: hidden; aspect-ratio: 4 / 5; cursor: zoom-in; position: relative; padding: 0; border: none; background: none; display: block; }
+  @media (max-width: 640px) {
+    .rep-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .rep-tile img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s ease; }
+  .rep-tile:hover img { transform: scale(1.04); }
+  .rep-more-note { text-align: center; font-size: 0.82rem; color: var(--charcoal-soft); margin-top: 24px; }
+  .rep-actions { display: flex; justify-content: center; margin-top: 28px; }
+
+
+  /* ---------- Lightbox ---------- */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 80; background: rgba(16, 16, 16, 0.96);
+    display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s;
+  }
+  .lightbox.open { opacity: 1; visibility: visible; }
+  .lightbox figure { margin: 0; max-width: min(90vw, 900px); max-height: 84vh; }
+  .lightbox img { max-width: 100%; max-height: 84vh; display: block; object-fit: contain; }
+  .lightbox-close, .lightbox-prev, .lightbox-next {
+    position: absolute; background: none; border: none; color: var(--ivory); cursor: pointer; padding: 10px;
+  }
+  .lightbox-close { top: 16px; right: 16px; width: 40px; height: 40px; }
+  .lightbox-prev, .lightbox-next { top: 50%; transform: translateY(-50%); width: 48px; height: 48px; }
+  .lightbox-prev { left: clamp(4px, 2vw, 24px); }
+  .lightbox-next { right: clamp(4px, 2vw, 24px); }
+  .lightbox-close svg, .lightbox-prev svg, .lightbox-next svg { width: 100%; height: 100%; }
+  .lightbox-count { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.7); font-size: 0.78rem; letter-spacing: 0.1em; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Wedding info (3 cards) ---------- */
+  .wedding-day { background: var(--beige); }
+  .wedding-cards { display: grid; grid-template-columns: 1fr; gap: 1px; max-width: 1000px; margin: 0 auto; background: var(--line); }
+  @media (min-width: 720px) { .wedding-cards { grid-template-columns: repeat(3, 1fr); } }
+  .wedding-card { background: var(--beige); padding: 36px clamp(20px, 4vw, 32px); text-align: center; }
+  .wedding-card .icon { width: 28px; height: 28px; margin: 0 auto 16px; color: var(--olive); }
+  .card-label { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--taupe); margin: 0 0 8px; }
+  .card-time { font-family: var(--serif); font-size: 1.2rem; margin: 0 0 12px; }
+  .card-venue { font-size: 0.86rem; line-height: 1.6; color: var(--charcoal-soft); margin: 0 0 16px; }
+  .card-maps { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+  .card-maps .btn-line { font-size: 0.64rem; padding: 8px 12px; margin: 0; }
+
+  /* ---------- Countdown ---------- */
+  .countdown { display: flex; justify-content: center; gap: clamp(16px, 4vw, 34px); }
+  .countdown .unit { display: flex; flex-direction: column; align-items: center; min-width: 60px; }
+  .countdown .num { font-family: var(--serif); font-size: clamp(1.8rem, 6vw, 2.6rem); color: var(--charcoal); font-variant-numeric: tabular-nums; line-height: 1; }
+  .countdown .label { font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--charcoal-soft); margin-top: 6px; }
+
+  /* ---------- Highlight video (placeholder) ---------- */
+  .video-section { padding: 0; position: relative; }
+  /* Cùng quy tắc object-position như hero: khung ngang + ảnh dọc = dải mỏng,
+     %y phải đặt ≈ vị trí mặt trong ảnh (đo bằng mắt từ ảnh thật). Ảnh ôm/đứng
+     sát nhau thường có mặt ở 1/5 trên (~15-25%) — mặc định 50% ở đây từng cắt
+     cụt đầu ở thiệp Diệp & Quân (2026-08-06). Chỉnh inline style trên thẻ img
+     theo từng ảnh. */
+  .video-section img { width: 100%; height: min(88vw, 620px); object-fit: cover; object-position: 50% 25%; display: block; }
+  .video-veil { position: absolute; inset: 0; background: rgba(16,16,16,0.32); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; color: var(--ivory); text-align: center; padding: 24px; }
+  .video-play { width: 62px; height: 62px; border: 1px solid var(--ivory); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .video-play svg { width: 20px; height: 20px; margin-left: 3px; }
+  .video-veil .note { font-size: 0.8rem; letter-spacing: 0.06em; max-width: 40ch; opacity: 0.9; }
+
+  /* ---------- Dress code ---------- */
+  .dress-code-row { display: flex; justify-content: center; gap: clamp(40px, 8vw, 90px); flex-wrap: wrap; max-width: 700px; margin: 0 auto; }
+  .dress-col { text-align: center; }
+  .dress-col .who { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--taupe); margin-bottom: 16px; display: block; }
+  .swatches { display: flex; gap: 16px; justify-content: center; }
+  .swatch { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .swatch .dot { width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.12); }
+  .swatch .name { font-size: 0.68rem; color: var(--charcoal-soft); }
+
+  /* ---------- RSVP (khong co loi chuc/wishes-wall - ban GitHub Pages tinh) ---------- */
+  .rsvp-wrap { max-width: 480px; margin: 0 auto; }
+  form#rsvpForm { display: flex; flex-direction: column; gap: 16px; }
+  .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .field input, .field select, .field textarea { min-width: 0; width: 100%; }
+  .field label { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--charcoal-soft); }
+  .field input, .field select, .field textarea {
+    font-family: var(--sans); font-size: 0.92rem; padding: 10px 12px; border: 1px solid var(--line); background: #fafafa; color: var(--charcoal);
+  }
+  /* 2 lua chon xep thanh 2 O CANH NHAU giong hang "Ho va ten / So dien thoai"
+     (.row-2) — chi Linh chot 2026-08-15. Moi lua chon co khung + nen giong o
+     nhap de ca form nhin dong bo; man hinh hep thi tu xuong 1 cot.
+     GOC RE LOI CU: rule ".field input { width: 100% }" o tren an ca vao
+     input[type=radio], keo nut tron rong het hang nen chu bi day ra xa va
+     chong len nhau -> BAT BUOC ghi de width: auto o day, dung xoa. */
+  .radio-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 480px) { .radio-row { grid-template-columns: 1fr; } }
+  .radio-row label {
+    display: flex; align-items: center; gap: 10px; min-width: 0;
+    font-size: 0.88rem; text-transform: none; letter-spacing: 0;
+    padding: 10px 12px; border: 1px solid var(--line); background: #fafafa;
+    color: var(--charcoal); cursor: pointer;
+  }
+  .radio-row label:hover { border-color: var(--taupe); }
+  .radio-row label:has(input:checked) { border-color: var(--charcoal); }
+  .radio-row input[type="radio"] { width: auto; flex: none; margin: 0; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 480px) { .row-2 { grid-template-columns: 1fr; } }
+  .rsvp-submit { align-self: flex-start; margin-top: 4px; }
+  .rsvp-note { font-size: 0.74rem; color: var(--charcoal-soft); margin-top: 4px; }
+
+  .rsvp-success { text-align: center; padding: 20px 4px; }
+  .rsvp-success .icon { width: 34px; height: 34px; color: var(--olive); margin: 0 auto 16px; }
+  .rsvp-success h3 { font-size: 1.3rem; margin-bottom: 10px; }
+  .rsvp-success p { font-size: 0.92rem; color: var(--charcoal-soft); max-width: 42ch; margin: 0 auto 22px; line-height: 1.7; }
+  .rsvp-success .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+
+  /* ---------- Gift ---------- */
+  .gift-cards { display: flex; flex-direction: column; gap: 20px; max-width: 760px; margin: 0 auto 16px; }
+  @media (min-width: 640px) { .gift-cards { flex-direction: row; } }
+  .gift-card { flex: 1; border: 1px solid var(--line); padding: 26px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; }
+  .gift-card .who { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--taupe); }
+  /* Ảnh QR ngân hàng khách gửi: PHẢI CẮT GỌN trước khi nhúng (chỉ giữ mã QR +
+     tên chủ TK + số TK, bỏ logo ngân hàng/nền trang trí), nén width 500
+     quality 92, và LUÔN decode bằng cv2 đối chiếu số TK với số khách gõ tay
+     (đã bắt 1 vụ lệch số thật 2026-08-06) — chi tiết ở placeholder-inventory
+     mục 5. */
+  .qr-box {
+    width: 108px; height: 108px; border: 1px dashed var(--line); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--charcoal-soft);
+    position: relative;
+  }
+  .qr-box::before, .qr-box::after { content: ""; position: absolute; width: 10px; height: 10px; border: 1px solid var(--olive); }
+  .qr-box::before { top: 6px; left: 6px; border-right: none; border-bottom: none; }
+  .qr-box::after { bottom: 6px; right: 6px; border-left: none; border-top: none; }
+  .qr-box .qr-label { font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .qr-box img { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
+  .gift-card .bank { font-size: 0.98rem; font-family: var(--serif); }
+  .gift-card .acct-name { font-size: 0.85rem; color: var(--charcoal-soft); }
+  .gift-card .acct { font-variant-numeric: tabular-nums; color: var(--olive); font-size: 1rem; letter-spacing: 0.03em; }
+  .gift-note { text-align: center; font-size: 0.9rem; color: var(--charcoal-soft); max-width: 52ch; margin: 0 auto; line-height: 1.7; }
+
+  /* ---------- Footer ---------- */
+  /* Footer nen SANG dong bo voi ca trang (chi Linh chot 2026-08-15 — ban cu
+     nen den tuong phan gat voi phan tren). Duong ke mong thay cho mang mau. */
+  /* Nen GHI (--beige) dung bang mau voi section "Wedding Information"
+     (.wedding-day) — chi Linh chot 2026-08-15, thay nen den cua ban goc. */
+  footer.thanks { text-align: center; background: var(--beige); color: var(--charcoal); }
+  footer.thanks h3 { font-size: 1.7rem; margin-bottom: 8px; }
+  footer.thanks p { color: var(--charcoal-soft); font-size: 0.85rem; }
+  footer.thanks .credit { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; margin-top: 26px; color: var(--taupe); }
+  /* Dong "mon qua thiet ke": dung Y HET kieu chu cua .credit (hoa, gian chu
+     rong, co nho) theo yeu cau chi Linh 2026-08-15. */
+  footer.thanks .gift { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; margin-top: 10px; color: var(--taupe); }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 12px);
+    background: var(--dark); color: var(--ivory); font-size: 0.82rem; padding: 10px 18px; z-index: 90; max-width: 88vw; text-align: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-cue { animation: none; }
+    [data-reveal] { transition: none; }
+    .rep-tile img { transition: none; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<nav class="nav" id="nav">
+  <span class="nav-mono">M · L</span>
+  <div class="nav-links">
+    <a href="#top">Trang chủ</a>
+    <a href="#welcome">Lời ngỏ</a>
+    <a href="#wedding-day">Thông tin tiệc</a>
+    <a href="#rsvp">Xác nhận tham dự</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <img class="hero-photo" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBUODAsLDBkSEw8VHhsgHx4bHR0hJTApISMtJB0dKjkqLTEzNjY2ICg7Pzo0PjA1NjP/2wBDAQkJCQwLDBgODhgzIh0iMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzP/wgARCAprB9ADASIAAhEBAxEB/8QAGgABAAMBAQEAAAAAAAAAAAAAAAMEBQYCAf/EABQBAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhADEAAAAe0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAMAEAMEMAEAMAAAAMYMEMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgIUIkwIQgAEgQ8w8kwQMwIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUcMUg4A4AAAAAA8A8AIA4AoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAsAEQI0AoEsAksAQMgAoY4EsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAEIMAAAIIAAEAIAIMAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU0IcYkAkUwIQIQ8Mg0kcsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAggAwQAQAQQAgQQAQAAgAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//8QAFBEBAAAAAAAAAAAAAAAAAAAA4P/aAAgBAwEBPxAjF//EABQRAQAAAAAAAAAAAAAAAAAAAOD/2gAIAQIBAT8QIxf/xAAsEAEAAQIEBgIDAAMAAwAAAAABEQAhMUFRcRBhgZGh8LHBIHDRUMDgoOHx/9oACAEBAAE/EP8Av/8A/wB2jbTxEiiZkrU7o62uWJJc9aLJUnzADZ0hP8Ec9pRAU11YiI6JEH9rF4XC7CxYLxUujseJQFjSA/wJxjn0Y8qjBQC2OeBPLLLmJxEkIAmA1xx/aqESAJVyohTUAibzCXws8b7IAwKm5E8Hg4CBZjwHMAYq5yEODw1eS1tC3CjCKbGgMdc5CHB4qcRQN5CjgOaKYhGZODg8uBgD8gIsv4HzSUQBzavPiBmHkt3tTDM3WwjqDzTcrFG4C8JZ2xp49UEGQHJbXKgRoBgpjwcW5sFoTE2GtX0uRLBsX48cPlSHZEyrgR804BTCA4I5lqUCqAXVrpYBmXZBx50BBkIAHIIUeZ7ECJbMOsUICIjcTOj8UAYiYBUXMSRSEKYYTLypM6LIBKBETYBFohnACbzF2T9ns2ZYTG/8T3KtcbXLi7x3eIFAiQE2piYwV2CXoX6FRUW8Fmy2fnd4IIII2RzoOiQCIXhGjLvQIgIAQBR1ggEiaJQyQs0BQo9goBAAcCm8aMAonajuSWEkkFPIfgcQSowAYtQeCltKYn1Y60+FF0uZxocuD40QCgZbA3x3nWnY0ah8OYWQTdMR510gywFjxUIOiLPwpUZCEJGnkhAAC4Qs2mmaVzQGKXa4xliVLrKDYSEgVcu1RwKGYF783TKKDakOL/2MDPHSpFqHJvy0b58JlyDIs7m+VHlWwkJOCy2+KecghwG2cvaptAhIRsqZETT7MAwvISTuFPspyFwVmOx+0Lb6KLh+fJTimQy0FxGzJ0ozEhhMhbyHiRggIkiVStSKtWa+uWzWM+0TfU3MHvrw8Hxes1V4jh67VXstX4AIBXGi/wBDrRvSK8lg8cRVTt0kUfdWCRAJsule21V5r5cTJPsq9hy4RACFMmyehL0ox5QuiTzH4CDCA6JfM06gUri2JdyHrxYev1f2fjTFGsYHVtV5dCMWTHlXWszJZ0OzFIsVWHoD5d+Pmap/R2TFZJzKvkmywGSaifZUaJglvmH85V4vi9ZqqwFItZT/AOKoX1AmYGUvvHJr2Wr8GcmTu/xRaiT+L22qvNfLj6zVXsOXBw2CF6UAq4qO/wCAhTNNDrcSnU/jiw9fq/s85xEZNgNp5TegYgCFgICjxWCEk6UKBWFmTB2mlSAJEwTh5nhRqAKtGa3y59ajFK10TjGp/TOmAKYRG14+s1V4jh67VXstX4GEuxsE+VOJDzApt2Xb8fbavwIes1V7DlwIqVza6oaLHwP4BFsylBEITdiPs4sPX6v7ObEuFHLTKNBkJuC68Y+B8EfR61ecfnQYu0HR4TaIFbrHw44w5sMH1fvrRYxgXBCg6q9ePrNVeI4eu1V7rV+DZimTIuPfxSEfOhkmyeGgxiuZrMdE4ADPK5rkGq1ZuoigLTGGQTydasDbhIhTQ0MxcJizWJoMJCiRHBODDM6VdGy2Ce5TVhKMpSHaOEhgh1EhqZRRYAks9Sz1ofMsOmo8zDge2UdXQObhQALrEDN3YwOhUQwh5BHFh6/V/ZzO0UzuERJymo+C2+xMIljdpIckQEyC8nW3KoowmPJpKxQTuqFydV+lOBAhiHPVzoYT2CDORD5pMCxSTImSKkrtgwjVCnpHA6gkBIjiNSTsF4USEWWHPhHZyEJjUjbep9rJiKy0afwAQAxQsu0cC9etU5LkSVCoZSh1pfiwILSCp3/AMmBAJk0GZ5psMwVCc8Xco0Dk+wIUv5SRuzFjpK60OEQAgAwDheRhiHW2Dzz80fBzY9lFzpFFS1axOsFRoxGWRlLy0Lb/AISKzdaLyfqklPTqc1Ijua9FD1nSwMTkHMDK7ipUZuvF5v1wi6KEKd7srWqHHQmYRK8i96WmIH4falVwACjW2H/nS63xCG8GKcFLCAHcoUy2Ae4YnCZLGG7gMViwQLbiuVr8EIbwMVO6ZoQ3UgoEkgSwK9jGue6M+2phTQwMz6tRXDyGdMCFiLnZselShIus7lwc2pfAxQhupBUqo4Kw7IQ1oNEI7QJ6UCpJTIKPYMhmOFCGjBUHZCGiuHkM6YELEXOzY9KlCRdZ3Lg5tS+BihDdSCpVRwVh2QhrQaIR2gT0qykEsi7F2nVzSAbhR2TM7AAaGLWQDdBCgguicg3sophXKmHR0piIMRd7Nj0oYs6Fv7hcnPCi1L0I3imLBByHVDwJq4FC4sGFFySgrRwVB6hFOCGLAdoE9P2lfP6DXttKOoiS0ktfW8GzT6xgk5MHx1oewgXmmK0gUWQzWTqTHdoQBA8NJLleb+OAnV/Kj4EATkyU+aysIvbPRp8QqTs1ebh9DXm/ih9DKnsNCmWoBeiUO9Ws2pYwr8Mnaj4EATkyU+aysIvbPRp8QqTs1ebh9DXm/ih9DKnsNDhZv/mkQrlgAMwusZc69znTQQBFcAmjjEYZRZUjY+aJ1/xwti9mnIC8QMSfNRnY4cxn1s9aNc3YdgdY8Km6z4XB7Rwx6fR+0vaaNe20ojLhGbDP1UirIdzswU8oiEcys4yAxYv9eatJuBoxcr22lJ7VYnIVXlbyV5uhxJo+So4BxivkNRXE+cgc+Ul8xK9po1FC5KIiyUoLE9KIhtIV6jQq93Jd4kiYnwUUWVXCwwVzhmc2nEmj5KjgHGK+Q1FcT5yBz5SXzEr2mjUULkoiLJSgsT0oiG0hXqNDgUZJBAZuvSQYQVax5DprVuUuw5TFGegkgRbSY8UAwXaBaho15/44eB+Wl0CQ82z7rGdE1GHgmsmTgggSDIZZtF0pHmBsKxkxyK9xrXt9FT2KzkXQb2nr+0Y4uSQQmVyPNX0cCYYi0DQrKgLBsmfNlo6AIBImlTRJUvxqkQ6tZ6dY+yc1aeOhJBCZXI81aT1MwwGQ0oKkw7wJ8pp0mUAYEREbmpoGAzqGc7DC3mp5wACTrdnxRdhapKDJ/tPHQkghMrkeaPqYlJMRZ2GVBkWALgM3dpQiAQHIRyTzoENxGJfWU9qRSeikGM/4FXtcCAg1fpU84ABJ1uz4ouwtUlBk/wBp46EkEJlcjzR9TEpJiLOwyoMiwBcBm7tKg4AJBAZ3Z8UGCkwAdJJ71PvsNwKOGwq3iy77kq96GKcTmXyYR2oicMbRWcZSY5VNk62M8yz80gcZBy+t1Thylkwjnmc56VPtkyQt72GrRNEs2A64pd1qPGSMRpMIKFEgEhAM7s+Kb7ScTdJLi9tRFIikFFGAA0NgQafFNqQJaiebr4/7/wD/APV1P//Z" alt="Ảnh cưới Dolinhanh Bridal, cô dâu nhìn chú rể">
+  <div class="hero-text">
+    <p class="hero-kicker">We're getting married</p>
+    <h1>Minh &amp; Linh</h1>
+    <p class="hero-date">12 . 12 . 2026</p>
+    <button class="scroll-cue" data-scroll-to="#welcome">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="8" y="3" width="8" height="14" rx="4"></rect><path d="M12 7v3"></path></svg>
+      Scroll to begin
+    </button>
+  </div>
+  <p class="hero-strip"><b>Save our date</b> &nbsp;·&nbsp; 12 . 12 . 2026 &nbsp;·&nbsp; TP.HCM, Việt Nam</p>
+</header>
+
+<section class="welcome" id="welcome" data-reveal>
+  <div class="welcome-grid">
+    <div class="welcome-inner">
+      <span class="mono-vertical">M · L</span>
+      <div>
+        <p class="eyebrow">Welcome</p>
+        <h2>Dear family &amp; friends,</h2>
+        <!-- LOI CHUNG dung cho MOI cap doi (chi Linh chot 2026-08-15) — chi
+             thay ten o dong .signature va monogram, KHONG viet lai doan van.
+             Giu giong trung tinh, khong nhac chi tiet rieng cua cap nao. -->
+        <p>Cảm ơn Cô/Chú, Anh/Chị đã luôn yêu thương, đồng hành và là một phần quan trọng trong hành trình của chúng mình. Sau những năm tháng cùng nhau đi qua bao vui buồn, hai đứa đã đến ngày muốn nắm tay nhau bước sang một chặng đường mới.</p>
+        <p>Sự hiện diện của mọi người trong ngày trọng đại này sẽ là niềm hạnh phúc lớn nhất đối với chúng mình.</p>
+        <p class="sign-off">With love,</p>
+        <p class="signature">Minh &amp; Linh</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BO HAN 2 section theo yeu cau chi Linh 2026-08-15, de thiep dung tu dong
+     100% khong can bien tap tay:
+       1. section "Our story" (timeline 4 moc + 3 doan ke chuyen tinh yeu)
+       2. section "Pre-wedding gallery" (luoi 6-12 anh)
+     Thiep gio chi dung DUNG 1 ANH (hero). Muc Welcome giu lai nhung dung LOI
+     CHUNG, chi thay ten cap doi -> khong phai viet rieng cho tung khach. -->
+
+<section class="wedding-day" id="wedding-day" data-reveal>
+  <p class="eyebrow center">Thông tin tiệc cưới</p>
+  <div class="wedding-cards">
+    <div class="wedding-card">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 3v3M9 6h6M12 6l7 5v10H5V11l7-5Z"></path><path d="M10 20v-5h4v5"></path></svg>
+      <p class="card-label">Groom's ceremony</p>
+      <p class="card-time">9:30 AM, Thứ Bảy 12.12.2026</p>
+      <p class="card-venue">Lễ Thành Hôn tại tư gia nhà trai<br>12 Nguyễn Trãi, P. Bến Thành, Q.1, TP.HCM</p>
+      <div class="card-maps">
+        <a class="btn-line" id="mapGroomGoogle" href="#" target="_blank" rel="noopener">Google Maps</a>
+      </div>
+    </div>
+    <div class="wedding-card">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 3v3M9 6h6M12 6l7 5v10H5V11l7-5Z"></path><path d="M10 20v-5h4v5"></path></svg>
+      <p class="card-label">Bride's ceremony</p>
+      <p class="card-time">8:00 AM, Thứ Bảy 12.12.2026</p>
+      <p class="card-venue">Lễ Vu Quy tại tư gia nhà gái<br>45 Lê Văn Sỹ, P.12, Q.3, TP.HCM</p>
+      <div class="card-maps">
+        <a class="btn-line" id="mapBrideGoogle" href="#" target="_blank" rel="noopener">Google Maps</a>
+      </div>
+    </div>
+    <div class="wedding-card">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="5" y="4" width="14" height="17"></rect><path d="M9 8h2M13 8h2M9 12h2M13 12h2M9 16h2M13 16h2"></path></svg>
+      <p class="card-label">Reception</p>
+      <p class="card-time">6:00 PM, Thứ Bảy 12.12.2026</p>
+      <p class="card-venue">Trung tâm Tiệc cưới Diamond Palace<br>123 Nguyễn Trãi, P. Bến Thành, Q.1, TP.HCM</p>
+      <div class="card-maps">
+        <a class="btn-line" id="mapReceptionGoogle" href="#" target="_blank" rel="noopener">Google Maps</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="countdown-section" data-reveal>
+  <p class="eyebrow center">Countdown</p>
+  <div class="countdown" id="countdown" aria-live="off">
+    <div class="unit"><span class="num" id="cd-days">00</span><span class="label">Days</span></div>
+    <div class="unit"><span class="num" id="cd-hours">00</span><span class="label">Hours</span></div>
+    <div class="unit"><span class="num" id="cd-mins">00</span><span class="label">Minutes</span></div>
+    <div class="unit"><span class="num" id="cd-secs">00</span><span class="label">Seconds</span></div>
+  </div>
+</section>
+
+<!-- BO HAN 2 khoi theo yeu cau chi Linh 2026-08-15 (DLA cho thue vay, khong
+     giao phong su cuoi/video highlight nen ca 2 muc nay luon rong):
+       1. section "Phóng sự cưới" + nut Google Drive
+          (kem bien FULL_ALBUM_URL va listener #fullAlbumBtn trong JS)
+       2. khoi .video-section (anh full-bleed co nut play + dong "Video
+          highlight se duoc cap nhat sau buoi quay")
+     CSS cua .video-section van con trong <style> phong khi sau nay dung lai.
+     Anh hero gio la anh full-bleed DUY NHAT -> van bat buoc >= 1900px. -->
+
+<section class="dress-code" data-reveal>
+  <p class="eyebrow center">Dress code</p>
+  <div class="dress-code-row">
+    <div class="dress-col">
+      <span class="who">Ladies</span>
+      <div class="swatches">
+        <div class="swatch"><span class="dot" style="background:#f3ead9"></span><span class="name">Ivory</span></div>
+        <div class="swatch"><span class="dot" style="background:#d9c7a8"></span><span class="name">Beige</span></div>
+        <div class="swatch"><span class="dot" style="background:#c9a877"></span><span class="name">Champagne</span></div>
+      </div>
+    </div>
+    <div class="dress-col">
+      <span class="who">Gentlemen</span>
+      <div class="swatches">
+        <div class="swatch"><span class="dot" style="background:#2b2b26"></span><span class="name">Charcoal</span></div>
+        <div class="swatch"><span class="dot" style="background:#26303f"></span><span class="name">Navy</span></div>
+        <div class="swatch"><span class="dot" style="background:#6b6b66"></span><span class="name">Grey</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="rsvp" id="rsvp" data-reveal>
+  <p class="eyebrow center">Xác nhận tham dự</p>
+  <p class="section-lede">Chúng mình rất mong được gặp bạn trong ngày trọng đại. Nếu có thể, xin vui lòng xác nhận tham dự cùng chúng mình.</p>
+  <div class="rsvp-wrap">
+    <form id="rsvpForm">
+      <div class="row-2">
+        <div class="field">
+          <label for="rsvpName">Họ và tên</label>
+          <input id="rsvpName" name="name" type="text" required placeholder="Nguyễn Văn A">
+        </div>
+        <div class="field">
+          <label for="rsvpPhone">Số điện thoại (không bắt buộc)</label>
+          <input id="rsvpPhone" name="phone" type="tel" placeholder="09xx xxx xxx">
+        </div>
+      </div>
+      <div class="field">
+        <label>Xác nhận tham dự</label>
+        <div class="radio-row">
+          <label><input type="radio" name="attend" value="yes" checked> Rất vui được tham dự</label>
+          <label><input type="radio" name="attend" value="no"> Rất tiếc không thể tham dự</label>
+        </div>
+      </div>
+      <div class="field">
+        <label for="rsvpCount">Số lượng khách đi cùng</label>
+        <select id="rsvpCount" name="count">
+          <option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option>
+        </select>
+      </div>
+      <button class="btn-line rsvp-submit" type="submit">Gửi</button>
+      <p class="rsvp-note">Nếu cần liên hệ trực tiếp, vui lòng nhắn Zalo hoặc gọi điện cho cô dâu chú rể.</p>
+    </form>
+
+    <div class="rsvp-success" id="rsvpSuccess" hidden>
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 20s-7-4.4-9.5-9A5 5 0 0 1 12 6a5 5 0 0 1 9.5 5c-2.5 4.6-9.5 9-9.5 9Z"></path></svg>
+      <h3>Cảm ơn bạn!</h3>
+      <p>Chúng mình đã nhận được xác nhận tham dự của bạn. Sự hiện diện của bạn là món quà quý giá nhất đối với chúng mình.</p>
+      <div class="actions">
+        <button class="btn-line" id="addGoogleCal" type="button">📅 Add to Google Calendar</button>
+        <button class="btn-line ghost" id="addAppleCal" type="button">🍎 Add to Apple Calendar</button>
+        <a class="btn-line ghost" id="successMapLink" href="#" target="_blank" rel="noopener">📍 Open Google Maps</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="thanks" data-reveal>
+  <!-- Quote footer da BO theo yeu cau chi Linh 2026-08-15 (ban Dolinhanh khong
+       dung cau quote nua) — xem references/footer-quotes.md. -->
+  <h3>Minh &amp; Linh</h3>
+  <p>Trân trọng cảm ơn quý vị đã luôn yêu thương và đồng hành cùng chúng tôi. Sự hiện diện của quý vị trong ngày trọng đại này là niềm hạnh phúc lớn lao của gia đình chúng tôi.</p>
+  <p style="font-family:var(--serif);font-style:italic;font-size:1.1rem;color:var(--charcoal-soft);margin-top:18px">12 . 12 . 2026</p>
+  <p class="credit">Wedding Invitation by Nupakachi Wedding &amp; Dolinhanh Bridal</p>
+  <p class="gift">A design gift for our couples</p>
+</footer>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lbClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 5l14 14M19 5L5 19"></path></svg></button>
+  <button class="lightbox-prev" id="lbPrev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 5l-7 7 7 7"></path></svg></button>
+  <figure><img id="lbImg" src="" alt=""></figure>
+  <button class="lightbox-next" id="lbNext"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7"></path></svg></button>
+  <div class="lightbox-count" id="lbCount"></div>
+</div>
+
+<script>
+  (function () {
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var bar = document.getElementById('progressBar');
+    var nav = document.getElementById('nav');
+    window.addEventListener('scroll', function () {
+      var h = document.documentElement;
+      var scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+      bar.style.width = (scrolled || 0) + '%';
+      nav.classList.toggle('solid', h.scrollTop > window.innerHeight * 0.7);
+    }, { passive: true });
+
+    document.querySelectorAll('[data-scroll-to]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var target = document.querySelector(btn.getAttribute('data-scroll-to'));
+        if (target) target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+      });
+    });
+
+    var revealEls = document.querySelectorAll('[data-reveal]');
+    if ('IntersectionObserver' in window && !reduced) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.12 });
+      revealEls.forEach(function (el) { io.observe(el); });
+    } else {
+      revealEls.forEach(function (el) { el.classList.add('in'); });
+    }
+
+    var target = new Date('2026-12-12T18:00:00+07:00').getTime();
+    function tick() {
+      var now = Date.now();
+      var diff = Math.max(0, target - now);
+      var d = Math.floor(diff / 86400000);
+      var h = Math.floor(diff % 86400000 / 3600000);
+      var m = Math.floor(diff % 3600000 / 60000);
+      var s = Math.floor(diff % 60000 / 1000);
+      var pad = function (n) { return String(n).padStart(2, '0'); };
+      document.getElementById('cd-days').textContent = pad(d);
+      document.getElementById('cd-hours').textContent = pad(h);
+      document.getElementById('cd-mins').textContent = pad(m);
+      document.getElementById('cd-secs').textContent = pad(s);
+    }
+    tick();
+    setInterval(tick, 1000);
+
+    var toastEl = document.createElement('div');
+    toastEl.className = 'toast';
+    toastEl.setAttribute('role', 'status');
+    document.body.appendChild(toastEl);
+    var toastTimer;
+    function toast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2600);
+    }
+
+    // Copy to clipboard
+    document.querySelectorAll('.copy-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var value = btn.getAttribute('data-copy');
+        var done = function () { toast('Đã sao chép số tài khoản'); };
+        var fail = function () { toast('Không sao chép được, vui lòng chép thủ công'); };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(value).then(done, fail);
+        } else {
+          var ta = document.createElement('textarea');
+          ta.value = value;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); done(); } catch (e) { fail(); }
+          document.body.removeChild(ta);
+        }
+      });
+    });
+
+    // Map links
+    var venues = {
+      groom: 'Tư gia nhà trai, 12 Nguyễn Trãi, Phường Bến Thành, Quận 1, TP.HCM',
+      bride: 'Tư gia nhà gái, 45 Lê Văn Sỹ, Phường 12, Quận 3, TP.HCM',
+      reception: 'Trung tâm Tiệc cưới Diamond Palace, 123 Nguyễn Trãi, Phường Bến Thành, Quận 1, TP.HCM'
+    };
+    function gmaps(addr) { return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(addr); }
+    document.getElementById('mapGroomGoogle').href = gmaps(venues.groom);
+    document.getElementById('mapBrideGoogle').href = gmaps(venues.bride);
+    document.getElementById('mapReceptionGoogle').href = gmaps(venues.reception);
+    document.getElementById('successMapLink').href = gmaps(venues.reception);
+
+    // Add to calendar
+    function buildIcs() {
+      return [
+        'BEGIN:VCALENDAR', 'VERSION:2.0', 'BEGIN:VEVENT',
+        'DTSTART:20261212T110000Z', 'DTEND:20261212T140000Z',
+        'SUMMARY:Tiệc cưới Minh & Linh',
+        'LOCATION:' + venues.reception,
+        'DESCRIPTION:Trân trọng kính mời đến chung vui tiệc cưới của Minh & Linh.',
+        'END:VEVENT', 'END:VCALENDAR'
+      ].join('\r\n');
+    }
+    document.getElementById('addAppleCal').addEventListener('click', function () {
+      var blob = new Blob([buildIcs()], { type: 'text/calendar;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = 'ThiepCuoi-Minh-Linh.ics';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      toast('Đã tải file lịch, mở file để thêm vào Apple Calendar');
+    });
+    document.getElementById('addGoogleCal').addEventListener('click', function () {
+      var url = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+        + '&text=' + encodeURIComponent('Tiệc cưới Minh & Linh')
+        + '&dates=20261212T110000Z/20261212T140000Z'
+        + '&details=' + encodeURIComponent('Trân trọng kính mời đến chung vui tiệc cưới của Minh & Linh.')
+        + '&location=' + encodeURIComponent(venues.reception);
+      window.open(url, '_blank', 'noopener');
+    });
+
+    // RSVP -- GITHUB PAGES: KHONG co muc loi chuc/wishes-wall va KHONG goi
+    // fetch() toi dau ca -- GitHub Pages la static hosting thuan, khong co
+    // server nao dung sau de nhan POST. Quyet dinh 2026-08-09 (anh Cuong):
+    // mot loi chuc "khach viet xong la bien mat, khong ai khac thay duoc"
+    // phan tac dung, khien khach nghi trang lam au/khong chuyen nghiep --
+    // nen bo han thay vi giu ban gia (khac voi ban Netlify co Netlify
+    // Function + Blobs luu that, xem skill thiep-cuoi-online). RSVP xac
+    // nhan tham du van giu vi khong phu thuoc server: chi hien loi cam on +
+    // nut them lich / mo ban do, ca hai deu chay client-side thuan tuy.
+    document.getElementById('rsvpForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      document.getElementById('rsvpForm').hidden = true;
+      document.getElementById('rsvpSuccess').hidden = false;
+      this.reset();
+    });
+
+    // Lightbox
+    var galleries = {
+      rep: Array.from(document.querySelectorAll('#repGrid .rep-tile img')).map(function (img) { return { src: img.src, alt: img.alt }; }),
+      pw: Array.from(document.querySelectorAll('#pwGrid .rep-tile img')).map(function (img) { return { src: img.src, alt: img.alt }; })
+    };
+    var lb = document.getElementById('lightbox');
+    var lbImg = document.getElementById('lbImg');
+    var lbCount = document.getElementById('lbCount');
+    var activeGallery = 'rep';
+    var activeIndex = 0;
+
+    function openLightbox(galleryName, index) {
+      activeGallery = galleryName;
+      activeIndex = index;
+      showLightboxImage();
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function showLightboxImage() {
+      var set = galleries[activeGallery];
+      var item = set[activeIndex];
+      lbImg.src = item.src;
+      lbImg.alt = item.alt;
+      lbCount.textContent = (activeIndex + 1) + ' / ' + set.length;
+    }
+    function closeLightbox() {
+      lb.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function stepLightbox(dir) {
+      var set = galleries[activeGallery];
+      activeIndex = (activeIndex + dir + set.length) % set.length;
+      showLightboxImage();
+    }
+
+    document.querySelectorAll('.rep-tile').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        openLightbox(btn.getAttribute('data-gallery'), parseInt(btn.getAttribute('data-index'), 10));
+      });
+    });
+    document.getElementById('lbClose').addEventListener('click', closeLightbox);
+    document.getElementById('lbPrev').addEventListener('click', function () { stepLightbox(-1); });
+    document.getElementById('lbNext').addEventListener('click', function () { stepLightbox(1); });
+    lb.addEventListener('click', function (e) { if (e.target === lb) closeLightbox(); });
+    document.addEventListener('keydown', function (e) {
+      if (!lb.classList.contains('open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') stepLightbox(-1);
+      if (e.key === 'ArrowRight') stepLightbox(1);
+    });
+  })();
+</script>
+
+</body>
+</html>
