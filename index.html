@@ -244,6 +244,7 @@
   /* ---------- RSVP (khong co loi chuc/wishes-wall - ban GitHub Pages tinh) ---------- */
   .rsvp-wrap { max-width: 480px; margin: 0 auto; }
   form#rsvpForm { display: flex; flex-direction: column; gap: 16px; }
+  form#rsvpForm[hidden] { display: none; }
   .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
   .field input, .field select, .field textarea { min-width: 0; width: 100%; }
   .field label { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--charcoal-soft); }
@@ -328,6 +329,11 @@
     .rep-tile img { transition: none; }
     html { scroll-behavior: auto; }
   }
+  footer.thanks .ig { margin-top: 10px; font-size: 0.66rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--charcoal-soft); }
+  footer.thanks .ig a { color: inherit; text-decoration: none;
+    border-bottom: 1px solid var(--line); padding-bottom: 1px; }
+  footer.thanks .ig-dot { margin: 0 8px; opacity: 0.5; }
 </style>
 
 <div class="progress-bar" id="progressBar"></div>
@@ -509,6 +515,9 @@
   <p style="font-family:var(--serif);font-style:italic;font-size:1.1rem;color:var(--charcoal-soft);margin-top:18px">12 . 12 . 2026</p>
   <p class="credit">Wedding Invitation by Nupakachi Wedding &amp; Dolinhanh Bridal</p>
   <p class="gift">A design gift for our couples</p>
+  <p class="ig"><a href="https://www.instagram.com/nupakachiweddingfilm/" target="_blank" rel="noopener">@nupakachiweddingfilm</a>
+    <span class="ig-dot">·</span>
+    <a href="https://www.instagram.com/dolinhanh.bridal/" target="_blank" rel="noopener">@dolinhanh.bridal</a></p>
 </footer>
 
 <div class="lightbox" id="lightbox">
@@ -642,17 +651,46 @@
       window.open(url, '_blank', 'noopener');
     });
 
-    // RSVP -- GITHUB PAGES: KHONG co muc loi chuc/wishes-wall va KHONG goi
-    // fetch() toi dau ca -- GitHub Pages la static hosting thuan, khong co
-    // server nao dung sau de nhan POST. Quyet dinh 2026-08-09 (anh Cuong):
-    // mot loi chuc "khach viet xong la bien mat, khong ai khac thay duoc"
-    // phan tac dung, khien khach nghi trang lam au/khong chuyen nghiep --
-    // nen bo han thay vi giu ban gia (khac voi ban Netlify co Netlify
-    // Function + Blobs luu that, xem skill thiep-cuoi-online). RSVP xac
-    // nhan tham du van giu vi khong phu thuoc server: chi hien loi cam on +
-    // nut them lich / mo ban do, ca hai deu chay client-side thuan tuy.
+    // RSVP -- GUI THAT ve Apps Script Web App (16/08/2026).
+    // Truoc day chi hien "cam on" roi vut du lieu di, co dau chu re khong he
+    // nhan duoc gi (GitHub Pages la hosting tinh, khong nhan POST). Nay gui
+    // sang RSVP_URL -- mot Apps Script Web App rieng -- de no ghi vao Sheet
+    // va mail cho co dau chu re.
+    // Dung mode:'no-cors' + KHONG dat header: nhu vay la "simple request",
+    // trinh duyet khong ban preflight OPTIONS (Apps Script khong tra loi
+    // OPTIONS -> dat header vao la hong). Doi lai khong doc duoc phan hoi,
+    // nen bao thanh cong ngay; that bai thi luu vao localStorage de gui lai.
+    var RSVP_URL  = '';
+    var MA_THIEP  = 'thiep-mau-dolinhanh';
+
+    function guiRsvp(data) {
+      if (!RSVP_URL || RSVP_URL.charAt(0) === '{') return;   // chua cau hinh
+      try {
+        fetch(RSVP_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: JSON.stringify(data)
+        })['catch'](function () { luuTam(data); });
+      } catch (err) { luuTam(data); }
+    }
+    function luuTam(data) {
+      try {
+        var k = 'rsvp_chua_gui';
+        var ds = JSON.parse(localStorage.getItem(k) || '[]');
+        ds.push(data);
+        localStorage.setItem(k, JSON.stringify(ds));
+      } catch (e) {}
+    }
+
     document.getElementById('rsvpForm').addEventListener('submit', function (e) {
       e.preventDefault();
+      guiRsvp({
+        ma: MA_THIEP,
+        ten: (document.getElementById('rsvpName') || {}).value || '',
+        sdt: (document.getElementById('rsvpPhone') || {}).value || '',
+        thamdu: (document.querySelector('input[name="attend"]:checked') || {}).value || '',
+        sokhach: (document.getElementById('rsvpCount') || {}).value || ''
+      });
       document.getElementById('rsvpForm').hidden = true;
       document.getElementById('rsvpSuccess').hidden = false;
       this.reset();
